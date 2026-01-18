@@ -1,82 +1,100 @@
-1. Definicija fizičkog modela
+# Specifikacija projekta: Problem n-tela (HPC)
 
-Problem n-tela se zasniva na Njutnovom zakonu univerzalne gravitacije. Za svako telo i u sistemu od n tela, postoji sila kojom ostala tela deluju na njega.
+## 1. Definicija fizičkog modela
 
-Algoritam (Direct Summation)
+Problem n-tela zasniva se na Njutnovom zakonu univerzalne gravitacije. Svako telo u sistemu od *n* tela trpi silu kao rezultat gravitacionih interakcija sa svim ostalim telima.
 
-S obzirom na zahteve za paralelizaciju, koristićemo brute-force (all-pairs) pristup čija je složenost O(n2) po iteraciji. Ovo je idealno za HPC demonstraciju jer je računski intenzivno.
+Radi izbegavanja numeričkih singularnosti pri veoma malim rastojanjima, u izrazu sile koristi se **softening parametar** ( \varepsilon ).
 
-    Inicijalizacija: Postavljanje početnih pozicija, masa i brzina za n tela.
+[ \vec{F}*{ij} = G \frac{m_i m_j}{(r*{ij}^2 + \varepsilon^2)^{3/2}} \vec{r}_{ij} ]
 
-    Iterativni korak (Time-stepping):
+Ukupna sila na telo *i* dobija se sumiranjem doprinosa svih ostalih tela.
 
-        Izračunaj rezultujuću silu na svako telo (interakcija sa svim ostalim telima).
+---
 
-        Ažuriraj ubrzanje: ai​=Fi​/mi​.
+## 2. Numerički metod
 
-        Ažuriraj brzinu i poziciju (korišćenjem Velocity Verlet ili Euler integracije).
+Problem se rešava iterativno metodom diskretnih vremenskih koraka (*time-stepping*).
 
-    Čuvanje stanja: Upisivanje koordinata u datoteku.
+Za integraciju kretanja koristi se **Eulerova metoda**, koja je jednostavna i dovoljna za potrebe ovog projekta. U svakom vremenskom koraku:
 
-2. Implementaciona specifikacija
-2.1. Python Implementacija
+1. Izračunava se rezultujuća sila na svako telo.
+2. Računa se ubrzanje:  ( \vec{a}_i = \vec{F}_i / m_i ).
+3. Ažuriraju se brzina i pozicija tela.
 
-    Sekvencijalna: Čista Python implementacija sa math ili numpy bibliotekom. Fokus na čitljivosti algoritma.
+---
 
-    Paralelna (multiprocessing): * Podela tela na grupe (chunks). Svaki proces računa nove sile i pozicije za svoj podskup tela.
+## 3. Algoritam (Direct Summation)
 
-        Korišćenje Pool ili Process objekata.
+Za izračunavanje sila koristi se **brute-force (all-pairs)** pristup, gde svako telo interaguje sa svim ostalim telima.
 
-        Izlaz: output_python.csv (format: iteration, body_id, x, y, z).
+* Vremenska složenost: ( O(n^2) ) po iteraciji
+* Razlog izbora: algoritam je računski intenzivan i pogodan za demonstraciju paralelizacije i skaliranja.
 
-2.2. Rust Implementacija
+---
 
-    Sekvencijalna: Fokus na performansama i "zero-cost" apstrakcijama.
+## 4. Implementacija u Python-u
 
-    Paralelna (Threads):
+### 4.1 Sekvencijalna verzija
 
-        Korišćenje std::thread ili biblioteke Rayon za efikasnu distribuciju iteracija kroz petlje.
+* Implementirana u programskom jeziku Python.
+* Fokus na jasnoći i korektnosti algoritma.
+* Rezultat simulacije se čuva u CSV datoteku.
 
-        Upotreba atomičnih referenci ili Arc<Mutex> (ako je neophodno) za deljenje podataka o pozicijama između niti.
+**Format izlaza:**
+`iteration, body_id, x, y, z`
 
-        Izlaz: output_rust.csv (isti format kao Python radi lakše vizuelizacije).
+### 4.2 Paralelna verzija (multiprocessing)
 
-3. Plan eksperimenata i skaliranje
-3.1. Jaka skalabilnost (Strong Scaling)
+* Paralelizacija se realizuje korišćenjem `multiprocessing` biblioteke.
+* Skup tela deli se na podskupove (*chunks*), gde svaki proces računa sile i ažurira stanje za svoj deo tela.
+* Rezultati se zapisuju u CSV datoteku istog formata kao u sekvencijalnoj verziji.
 
-    Fiksiran problem: n=2000 tela.
+---
 
-    Varijabla: Broj jezgara (1, 2, 4, 8, 12, 16...).
+## 5. Implementacija u Rust-u
 
-    Cilj: Izmeriti koliko se vreme izvršavanja smanjuje dodavanjem resursa za isti posao (Amdahlov zakon).
+### 5.1 Sekvencijalna verzija
 
-3.2. Slaba skalabilnost (Weak Scaling)
+* Implementirana u programskom jeziku Rust.
+* Fokus na performansama i eksplicitnoj kontroli memorije.
+* Rezultat simulacije se čuva u CSV datoteku identičnog formata kao u Python implementaciji.
 
-    Konstantno opterećenje: S obzirom na to da je složenost O(n2), posao po jezgru održavamo konstantnim tako što povećavamo broj tela n sa brojem jezgara P.
+### 5.2 Paralelna verzija (threads)
 
-    Pravilo: Ako se broj jezgara poveća 4 puta, broj tela n treba da se poveća za faktor 4​=2, kako bi n2 (posao) pratio broj procesora (Gustafsonov zakon).
+* Paralelizacija se ostvaruje korišćenjem niti (`std::thread` ili biblioteka zasnovanih na nitima).
+* Iteracije kroz tela se raspodeljuju na više niti.
+* Deljeni podaci (pozicije tela) tretiraju se kao nepromenljivi u okviru jednog vremenskog koraka.
+* Rezultati se zapisuju u CSV datoteku.
 
-    Varijabla: Parovi (n,P) gde je n2/P≈const.
+---
 
-4. Analiza i Izveštaj
+## 6. Eksperimenti skaliranja
 
-U izveštaju će biti definisani parametri:
+### 6.1 Jako skaliranje (Strong Scaling)
 
-    Procenat sekvencijalnog koda (s): Deo koda koji se bavi I/O operacijama (pisanje u fajl) i inicijalizacijom.
+* Broj tela je fiksan.
+* Menja se broj korišćenih jezgara.
+* Meri se vreme izvršavanja sekvencijalne i paralelne verzije u okviru istog programskog jezika.
 
-    Teorijski maksimumi:
+### 6.2 Slabo skaliranje (Weak Scaling)
 
-        Amdahl: Speedup(P)=s+P1−s​1​
+* Povećava se broj tela sa porastom broja jezgara.
+* Za algoritam složenosti ( O(n^2) ), broj tela se bira tako da važi:
 
-        Gustafson: Speedup(P)=s+P(1−s)
+[ \frac{n^2}{P} \approx const ]
 
-Statistička relevantnost
+* Cilj je da se opterećenje po jezgru održi približno konstantnim.
 
-Svaka tačka na grafiku biće rezultat 30 nezavisnih merenja. | Konfiguracija (Jezgra/N) | Srednje vreme (s) | Std. Devijacija | Outliers | | :--- | :--- | :--- | :--- | | 1 Core / 1000 N | ... | ... | ... | | 4 Cores / 1000 N | ... | ... | ... |
-5. Vizuelizacija (Rust)
+---
 
-Vizuelizacija će biti razvijena u Rust-u korišćenjem biblioteke Plotters.
+## 7. Vizuelizacija
 
-    Ulaz: Podaci generisani iz Python/Rust simulacija.
+Vizuelizacija rezultata realizuje se u programskom jeziku Rust.
 
-    Prikaz: 2D ili 3D grafički prikaz putanja tela kroz iteracije.
+* Ulaz: CSV datoteke generisane tokom simulacije.
+* Korišćenje grafičke biblioteke (npr. Plotters).
+* Prikaz kretanja tela kroz iteracije (2D ili 3D prikaz putanja).
+
+---
+
