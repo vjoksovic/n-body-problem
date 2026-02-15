@@ -1,0 +1,13 @@
+{
+  "G": 6.67430e-11,
+  "EPS": 1e-3,
+  "DT": 1e-2,
+  "STEPS": 100,
+  "N": 100,
+  "OUTPUT_PY_SEQ": "./outputs/seq_python.csv",
+  "OUTPUT_PY_PAR": "./outputs/par_python.csv",
+  "OUTPUT_RS_PAR": "./../outputs/par_rust.csv",
+  "OUTPUT_RS_SEQ": "./../outputs/seq_rust.csv",
+  "NUM_PROCESSES": null,
+  "RANDOM_SEED": 42
+}
