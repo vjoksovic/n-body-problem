@@ -10,7 +10,7 @@ EPS = config["EPS"]
 DT = config["DT"]
 STEPS = config["STEPS"]
 N = config["N"]
-OUTPUT_FILE = config["OUTPUT_FILE_PAR"]
+OUTPUT_FILE = config["OUTPUT_PY_PAR"]
 NUM_PROCESSES = config["NUM_PROCESSES"]
 
 # ---------------- FORCE WORKER ----------------

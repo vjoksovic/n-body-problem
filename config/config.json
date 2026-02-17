@@ -1,7 +1,7 @@
 {
   "G": 6.67430e-11,
   "EPS": 1e-3,
-  "DT": 1e-2,
+  "DT": 15,
   "STEPS": 100,
   "N": 100,
   "OUTPUT_PY_SEQ": "./outputs/seq_python.csv",

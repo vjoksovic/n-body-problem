@@ -21,8 +21,8 @@ build/
 target/
 **/target/
 
-# Generisani rezultati simulacije
 outputs/*.csv
+animations/*.gif
 
 # IDE / editor
 .vscode/

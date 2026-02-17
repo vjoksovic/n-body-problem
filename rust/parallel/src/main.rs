@@ -78,9 +78,9 @@ fn main() {
     let mut bodies: Vec<Body> = (0..config.n)
         .map(|_| Body {
             pos: [
-                rng.gen_range(-1.0..1.0),
-                rng.gen_range(-1.0..1.0),
-                rng.gen_range(-1.0..1.0),
+                rng.gen_range(0.0..1.0),
+                rng.gen_range(0.0..1.0),
+                rng.gen_range(0.0..1.0),
             ],
             vel: [0.0, 0.0, 0.0],
             mass: 1.0,

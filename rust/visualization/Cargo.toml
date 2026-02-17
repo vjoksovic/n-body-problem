@@ -1,0 +1,10 @@
+[package]
+name = "visualization"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+csv = "1"
+serde = { version = "1", features = ["derive"] }
+plotters = "0.3"
+plotters-svg = "0.3"
