@@ -1,13 +1,15 @@
 {
-  "G": 6.67430e-11,
-  "EPS": 1e-3,
+  "G": 6.6743e-11,
+  "EPS": 0.001,
   "DT": 15,
   "STEPS": 100,
   "N": 100,
   "OUTPUT_PY_SEQ": "./outputs/seq_python.csv",
   "OUTPUT_PY_PAR": "./outputs/par_python.csv",
-  "OUTPUT_RS_PAR": "./../outputs/par_rust.csv",
-  "OUTPUT_RS_SEQ": "./../outputs/seq_rust.csv",
-  "NUM_PROCESSES": null,
-  "RANDOM_SEED": 42
+  "OUTPUT_RS_PAR": "./../../outputs/par_rust.csv",
+  "OUTPUT_RS_SEQ": "./../../outputs/seq_rust.csv",
+  "NUM_PROCESSES": 1,
+  "RANDOM_SEED": 42,
+  "MAX_CORES": null,
+  "N_BASE_WEAK": 200
 }

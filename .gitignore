@@ -23,6 +23,7 @@ target/
 
 outputs/*.csv
 animations/*.gif
+scripts/results/
 
 # IDE / editor
 .vscode/

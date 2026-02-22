@@ -9,7 +9,7 @@ EPS = config["EPS"]
 DT = config["DT"]
 STEPS = config["STEPS"]
 N = config["N"]
-OUTPUT_FILE = config["OUTPUT_FILE_SEQ"]
+OUTPUT_FILE = config["OUTPUT_PY_SEQ"]
 
 # ---------------- INITIALIZATION ----------------
 np.random.seed(config["RANDOM_SEED"])
