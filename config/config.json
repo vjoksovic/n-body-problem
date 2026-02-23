@@ -8,8 +8,9 @@
   "OUTPUT_PY_PAR": "./outputs/par_python.csv",
   "OUTPUT_RS_PAR": "./../../outputs/par_rust.csv",
   "OUTPUT_RS_SEQ": "./../../outputs/seq_rust.csv",
-  "NUM_PROCESSES": 1,
+  "NUM_PROCESSES": 2,
   "RANDOM_SEED": 42,
   "MAX_CORES": null,
-  "N_BASE_WEAK": 200
+  "N_BASE_WEAK": 200,
+  "NUM_RUNS": 30
 }
